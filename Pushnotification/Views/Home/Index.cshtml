@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push Codelab</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> @* prevent favicon.ico request*@
+    @*<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
+        <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>*@
+    <link rel="stylesheet" href="styles/index.css">
+    <style>
+        .pn-nofity
+        {
+            background: #405a74;
+            color: white;
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            min-height: 50px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: "Tahoma";
+            font-size: 14px;
+            min-width: 300px;
+            max-width: 300px;
+            text-align: right;
+            z-index: 100000;
+            display: block;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Push Notification Test</h1>
+    </header>
+
+    <a id="res" class="pn-nofity" style="visibility: hidden;" href="#"></a>
+    @*<div id="res" class="pn-nofity" style="visibility: hidden;">
+        <a id="res-a" href="#"></a>
+    </div>*@
+
+    @*<script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>*@
+    @*<script src="https://www.gstatic.com/firebasejs/5.8.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase-messaging.js"></script>*@
+    <script src="/firebase-app.js"></script>
+    <script src="/firebase-messaging.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBJWm5aYrgXV32i5rB67mDrMcfidU2hvbE",//BDr6mfglFpZtvQTG0nP3fzMLzfSysnmZS9i_7_pPKpxqFNXRag-lnbfzii7dmJJi0-qdqY1Mery14gfauVLigWI
+            //apiKey: "BDr6mfglFpZtvQTG0nP3fzMLzfSysnmZS9i_7_pPKpxqFNXRag-lnbfzii7dmJJi0-qdqY1Mery14gfauVLigWI",
+            authDomain: "testfirebase-8377f.firebaseapp.com",
+            databaseURL: "https://testfirebase-8377f.firebaseio.com",
+            projectId: "testfirebase-8377f",
+            storageBucket: "testfirebase-8377f.appspot.com",
+            messagingSenderId: "710798760112"
+        };
+        firebase.initializeApp(config);
+
+        const messaging = firebase.messaging();
+        messaging.usePublicVapidKey("BDr6mfglFpZtvQTG0nP3fzMLzfSysnmZS9i_7_pPKpxqFNXRag-lnbfzii7dmJJi0-qdqY1Mery14gfauVLigWI");
+
+        messaging.requestPermission().then(function ()
+        {
+            return messaging.getToken().then(function (token)
+            {
+                console.log("token =>", token);
+            });
+        }).catch(function ()
+        {
+            console.log("Error");
+        });
+        messaging.onMessage(function (payload)
+        {
+            console.log(" Index.cshtml =>", payload);
+            var res = document.getElementById("res");
+            res.setAttribute("style", "visibility: inherit;");
+            //res.setAttribute("style", "href: 'http://www.google.com';");
+            res.setAttribute('href', "http://www.google.com");
+            res.innerText = payload.notification.body;
+            setTimeout(function ()
+            {
+                res.setAttribute("style", "visibility: hidden;");
+                res.innerText = "";
+            }, 5000);
+        });
+
+        self.addEventListener('notificationclick', function (event)
+        {
+            alert(12)
+            //console.log('[Service Worker] Notification click Received.');
+
+            event.notification.close();
+
+            event.waitUntil(
+                clients.openWindow('http://google.com/')
+            );
+        });
+
+            //messaging.setBackgroundMessageHandler(function (payload)
+            //{
+            //    console.log('[firebase-messaging-sw.js] Received background message ', payload);
+            //    // Customize notification here
+            //    var notificationTitle = 'Background Message Title';
+            //    var notificationOptions = {
+            //        body: 'Background Message body. 1111111111',
+            //        icon: '/firebase-logo.png'
+            //    };
+
+            //    return self.registration.showNotification(notificationTitle, notificationOptions);
+            //});
+    </script>
+</body>
+</html>
